@@ -1960,7 +1960,7 @@ void CTriggerSave::Spawn( void )
 	//}
 
 	//InitTrigger();
-	//SetTouch( SaveTouch );
+	//SetTouch( &CTriggerSave::SaveTouch );
 }
 
 void CTriggerSave::SaveTouch( CBaseEntity *pOther )
