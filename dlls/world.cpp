@@ -442,8 +442,10 @@ void SaveGlobalState( SAVERESTOREDATA *pSaveData )
 
 void RestoreGlobalState( SAVERESTOREDATA *pSaveData )
 {
+	gLoadingGame = TRUE;	// MrBozo
 	CRestore restoreHelper( pSaveData );
 	gGlobalState.Restore( restoreHelper );
+	gDoneLoading = TRUE;	// MrBozo
 }
 
 

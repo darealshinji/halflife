@@ -26,6 +26,9 @@
 #include <string.h>
 #include <stdio.h>
 
+// MrBozo
+#include <time.h>
+
 #include "ammohistory.h"
 #include "vgui_TeamFortressViewport.h"
 
@@ -253,6 +256,9 @@ DECLARE_COMMAND(m_Ammo, Close);
 DECLARE_COMMAND(m_Ammo, NextWeapon);
 DECLARE_COMMAND(m_Ammo, PrevWeapon);
 
+// MrBozo
+DECLARE_COMMAND(m_Ammo, autorecord);
+
 // width of ammo fonts
 #define AMMO_SMALL_WIDTH 10
 #define AMMO_LARGE_WIDTH 20
@@ -284,6 +290,9 @@ int CHudAmmo::Init(void)
 	HOOK_COMMAND("cancelselect", Close);
 	HOOK_COMMAND("invnext", NextWeapon);
 	HOOK_COMMAND("invprev", PrevWeapon);
+
+	// MrBozo
+	HOOK_COMMAND("autorecord", autorecord);
 
 	Reset();
 
@@ -822,6 +831,34 @@ void CHudAmmo::UserCmd_PrevWeapon(void)
 	gpActiveSel = NULL;
 }
 
+
+// MrBozo
+//-------------------------------------------------------------------------
+// autorecord command: records a demo with a unique file name
+//-------------------------------------------------------------------------
+void CHudAmmo::UserCmd_autorecord(void)
+{
+	time_t rawtime;
+	struct tm * timeinfo;
+	char demoname[128];
+
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+
+	// record format: date-time-map.dem (eg 2004_05_02-20_32_14-si_laser.dem)
+	sprintf( demoname,
+			"record %04i_%02i_%02i-%02i_%02i_%02i-%s\n",
+			timeinfo->tm_year + 1900,			// year
+			timeinfo->tm_mon + 1,				// month
+			timeinfo->tm_mday,					// day
+			timeinfo->tm_hour,					// hour
+			timeinfo->tm_min,					// minute
+			timeinfo->tm_sec, 					// second
+			gEngfuncs.pfnGetLevelName() + 5);	// map name
+
+	// run the record command
+	gEngfuncs.pfnClientCmd( demoname );
+}
 
 
 //-------------------------------------------------------------------------

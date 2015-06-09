@@ -1952,14 +1952,15 @@ LINK_ENTITY_TO_CLASS( trigger_autosave, CTriggerSave );
 
 void CTriggerSave::Spawn( void )
 {
-	if ( g_pGameRules->IsDeathmatch() )
-	{
+	// MrBozo
+	//if ( g_pGameRules->IsDeathmatch() )
+	//{
 		REMOVE_ENTITY( ENT(pev) );
 		return;
-	}
+	//}
 
-	InitTrigger();
-	SetTouch( &CTriggerSave::SaveTouch );
+	//InitTrigger();
+	//SetTouch( SaveTouch );
 }
 
 void CTriggerSave::SaveTouch( CBaseEntity *pOther )
@@ -1973,7 +1974,8 @@ void CTriggerSave::SaveTouch( CBaseEntity *pOther )
     
 	SetTouch( NULL );
 	UTIL_Remove( this );
-	SERVER_COMMAND( "autosave\n" );
+	// MrBozo
+	//SERVER_COMMAND( "autosave\n" );
 }
 
 #define SF_ENDSECTION_USEONLY		0x0001

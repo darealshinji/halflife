@@ -128,6 +128,9 @@ public:
 	void _cdecl UserCmd_NextWeapon( void );
 	void _cdecl UserCmd_PrevWeapon( void );
 
+	// MrBozo
+	void _cdecl UserCmd_autorecord( void );
+
 private:
 	float m_fFade;
 	RGBA  m_rgba;

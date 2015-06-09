@@ -20,6 +20,9 @@
 
 */
 
+// MrBozo
+#include <time.h>
+
 #include "extdll.h"
 #include "util.h"
 
@@ -47,6 +50,10 @@ extern DLL_GLOBAL int		g_iSkillLevel, gDisplayTitle;
 
 
 BOOL gInitHUD = TRUE;
+
+// MrBozo
+BOOL gLoadingGame = FALSE;
+BOOL gDoneLoading = FALSE;
 
 extern void CopyToBodyQue(entvars_t* pev);
 extern void respawn(entvars_t *pev, BOOL fCopyCorpse);
@@ -117,7 +124,12 @@ TYPEDESCRIPTION	CBasePlayer::m_playerSaveData[] =
 	DEFINE_FIELD( CBasePlayer, m_pTank, FIELD_EHANDLE ),
 	DEFINE_FIELD( CBasePlayer, m_iHideHUD, FIELD_INTEGER ),
 	DEFINE_FIELD( CBasePlayer, m_iFOV, FIELD_INTEGER ),
-	
+
+	// MrBozo
+	DEFINE_FIELD( CBasePlayer, m_flStartCharge, FIELD_TIME ),
+	DEFINE_FIELD( CBasePlayer, m_flAmmoStartCharge, FIELD_FLOAT ),
+	DEFINE_FIELD( CBasePlayer, m_flNextAmmoBurn, FIELD_FLOAT ),
+
 	//DEFINE_FIELD( CBasePlayer, m_fDeadTime, FIELD_FLOAT ), // only used in multiplayer games
 	//DEFINE_FIELD( CBasePlayer, m_fGameHUDInitialized, FIELD_INTEGER ), // only used in multiplayer games
 	//DEFINE_FIELD( CBasePlayer, m_flStopExtraSoundTime, FIELD_TIME ),
@@ -1982,7 +1994,62 @@ void CBasePlayer::PreThink(void)
 	{
 		pev->velocity = g_vecZero;
 	}
+
+	// MrBozo
+	if ( gLoadingGame && gDoneLoading )
+	{
+		gLoadingGame = FALSE;
+		gDoneLoading = FALSE;
+
+		extern cvar_t autorecord;
+		if ( strcmp( autorecord.string, "0" ) )
+		{
+			// stop previous demo (if any)
+			CLIENT_COMMAND( edict(), "stop\n" );
+
+			// start recording a new demo
+			if ( !strcmp( autorecord.string, "1" ) )
+			{
+				// with an auto generated name
+				AutoRecord();
+			}
+			else
+			{
+				// with a given name
+				char demoname[128];
+				sprintf( demoname, "record %s\n", autorecord.string );
+				CLIENT_COMMAND( edict(), demoname );
+			}
+		}
+
+	}
 }
+
+// MrBozo
+void CBasePlayer::AutoRecord( void )
+{
+	time_t rawtime;
+	struct tm * timeinfo;
+	char demoname[128];
+
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+
+	// record format: date-time-map.dem (eg 2004_05_02-20_32_14-si_laser.dem)
+	sprintf( demoname,
+			"record %04i_%02i_%02i-%02i_%02i_%02i-%s\n",
+			timeinfo->tm_year + 1900,			// year
+			timeinfo->tm_mon + 1,				// month
+			timeinfo->tm_mday,					// day
+			timeinfo->tm_hour,					// hour
+			timeinfo->tm_min,					// minute
+			timeinfo->tm_sec, 					// second
+			STRING(gpGlobals->mapname) );		// map name
+
+	// run the record command
+	CLIENT_COMMAND( edict(), demoname );
+}
+
 /* Time based Damage works as follows: 
 	1) There are several types of timebased damage:
 
@@ -2989,6 +3056,14 @@ int CBasePlayer::Save( CSave &save )
 {
 	if ( !CBaseMonster::Save(save) )
 		return 0;
+
+	// MrBozo: this disables the gauss from automatically firing on level transitions
+	if ( m_pActiveItem && m_pActiveItem->m_iId == WEAPON_GAUSS )
+	{
+		CBasePlayerWeapon *gauss;
+		gauss = (CBasePlayerWeapon *)m_pActiveItem->GetWeaponPtr();
+		gauss->m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.1;
+	}
 
 	return save.WriteFields( "PLAYER", this, m_playerSaveData, ARRAYSIZE(m_playerSaveData) );
 }

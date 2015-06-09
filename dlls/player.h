@@ -322,7 +322,9 @@ public:
 	char m_SbarString1[ SBAR_STRING_SIZE ];
 	
 	float m_flNextChatTime;
-	
+
+	// MrBozo
+	void AutoRecord( void );
 };
 
 #define AUTOAIM_2DEGREES  0.0348994967025
@@ -333,5 +335,7 @@ public:
 
 extern int	gmsgHudText;
 extern BOOL gInitHUD;
+extern BOOL gLoadingGame;	// MrBozo
+extern BOOL gDoneLoading;	// MrBozo
 
 #endif // PLAYER_H
