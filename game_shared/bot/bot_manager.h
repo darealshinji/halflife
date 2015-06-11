@@ -10,8 +10,6 @@
 #ifndef BASE_CONTROL_H
 #define BASE_CONTROL_H
 
-#pragma warning( disable : 4530 )					// STL uses exceptions, but we are not compiling with them - ignore warning
-
 #include "extdll.h"
 #include "util.h"
 #include <list>

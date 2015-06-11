@@ -24,8 +24,6 @@
 #include "demo_api.h"
 #include "studio_util.h"
 
-#pragma warning(disable: 4244)
-
 extern "C" int		iJumpSpectator;
 extern "C" float	vJumpOrigin[3];
 extern "C" float	vJumpAngles[3]; 

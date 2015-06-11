@@ -5,8 +5,6 @@
 #ifndef _NAV_PATH_H_
 #define _NAV_PATH_H_
 
-#pragma warning( disable : 4530 )					// STL uses exceptions, but we are not compiling with them - ignore warning
-
 #include "nav_area.h"
 #include "bot_util.h"
 

@@ -12,8 +12,6 @@
 
 #include "voice_status.h"
 
-#pragma warning( disable : 4800  )  // disable forcing int to bool performance warning
-
 
 static CVoiceStatus *g_pInternalVoiceStatus = NULL;
 

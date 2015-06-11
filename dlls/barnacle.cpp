@@ -150,7 +150,7 @@ void CBarnacle :: BarnacleThink ( void )
 
 	pev->nextthink = gpGlobals->time + 0.1;
 
-	if ( m_hEnemy != NULL )
+	if ( m_hEnemy != 0 )
 	{
 // barnacle has prey.
 
@@ -158,16 +158,16 @@ void CBarnacle :: BarnacleThink ( void )
 		{
 			// someone (maybe even the barnacle) killed the prey. Reset barnacle.
 			m_fLiftingPrey = FALSE;// indicate that we're not lifting prey.
-			m_hEnemy = NULL;
+			m_hEnemy = 0;
 			return;
 		}
 
 		if ( m_fLiftingPrey )
 		{
-			if ( m_hEnemy != NULL && m_hEnemy->pev->deadflag != DEAD_NO )
+			if ( m_hEnemy != 0 && m_hEnemy->pev->deadflag != DEAD_NO )
 			{
 				// crap, someone killed the prey on the way up.
-				m_hEnemy = NULL;
+				m_hEnemy = 0;
 				m_fLiftingPrey = FALSE;
 				return;
 			}
@@ -267,7 +267,7 @@ void CBarnacle :: BarnacleThink ( void )
 
 		pTouchEnt = TongueTouchEnt( &flLength );
 
-		if ( pTouchEnt != NULL && m_fTongueExtended )
+		if ( pTouchEnt != 0 && m_fTongueExtended )
 		{
 			// tongue is fully extended, and is touching someone.
 			if ( pTouchEnt->FBecomeProne() )
@@ -325,7 +325,7 @@ void CBarnacle :: Killed( entvars_t *pevAttacker, int iGib )
 	pev->solid = SOLID_NOT;
 	pev->takedamage = DAMAGE_NO;
 
-	if ( m_hEnemy != NULL )
+	if ( m_hEnemy != 0 )
 	{
 		pVictim = m_hEnemy->MyMonsterPointer();
 
@@ -365,7 +365,7 @@ void CBarnacle :: WaitTillDead ( void )
 	{
 		// death anim finished. 
 		StopAnimation();
-		SetThink ( NULL );
+		SetThink ( 0 );
 	}
 }
 
@@ -424,5 +424,5 @@ CBaseEntity *CBarnacle :: TongueTouchEnt ( float *pflLength )
 		}
 	}
 
-	return NULL;
+	return 0;
 }

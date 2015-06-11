@@ -445,7 +445,7 @@ void CScientist :: Scream( void )
 
 Activity CScientist::GetStoppedActivity( void )
 { 
-	if ( m_hEnemy != NULL ) 
+	if ( m_hEnemy != 0 ) 
 		return ACT_EXCITED;
 	return CTalkMonster::GetStoppedActivity();
 }
@@ -531,7 +531,7 @@ void CScientist :: RunTask( Task_t *pTask )
 			if ( RANDOM_LONG(0,63)< 8 )
 				Scream();
 
-			if ( m_hEnemy == NULL )
+			if ( m_hEnemy == 0 )
 			{
 				TaskFail();
 			}
@@ -813,7 +813,7 @@ void CScientist :: DeathSound ( void )
 
 void CScientist::Killed( entvars_t *pevAttacker, int iGib )
 {
-	SetUse( NULL );	
+	SetUse( 0 );	
 	CTalkMonster::Killed( pevAttacker, iGib );
 }
 
@@ -896,7 +896,7 @@ Schedule_t *CScientist :: GetSchedule ( void )
 		CSound *pSound;
 		pSound = PBestSound();
 
-		ASSERT( pSound != NULL );
+		ASSERT( pSound != 0 );
 		if ( pSound && (pSound->m_iType & bits_SOUND_DANGER) )
 			return GetScheduleOfType( SCHED_TAKE_COVER_FROM_BEST_SOUND );
 	}
@@ -911,8 +911,8 @@ Schedule_t *CScientist :: GetSchedule ( void )
 				m_fearTime = gpGlobals->time;
 			else if ( DisregardEnemy( pEnemy ) )		// After 15 seconds of being hidden, return to alert
 			{
-				m_hEnemy = NULL;
-				pEnemy = NULL;
+				m_hEnemy = 0;
+				pEnemy = 0;
 			}
 		}
 
@@ -928,7 +928,7 @@ Schedule_t *CScientist :: GetSchedule ( void )
 			CSound *pSound;
 			pSound = PBestSound();
 
-			ASSERT( pSound != NULL );
+			ASSERT( pSound != 0 );
 			if ( pSound )
 			{
 				if ( pSound->m_iType & (bits_SOUND_DANGER | bits_SOUND_COMBAT) )
@@ -955,7 +955,7 @@ Schedule_t *CScientist :: GetSchedule ( void )
 			int relationship = R_NO;
 
 			// Nothing scary, just me and the player
-			if ( pEnemy != NULL )
+			if ( pEnemy != 0 )
 				relationship = IRelationship( pEnemy );
 
 			// UNDONE: Model fear properly, fix R_FR and add multiple levels of fear
@@ -1032,17 +1032,17 @@ MONSTERSTATE CScientist :: GetIdealState ( void )
 	case MONSTERSTATE_COMBAT:
 		{
 			CBaseEntity *pEnemy = m_hEnemy;
-			if ( pEnemy != NULL )
+			if ( pEnemy != 0 )
 			{
 				if ( DisregardEnemy( pEnemy ) )		// After 15 seconds of being hidden, return to alert
 				{
 					// Strip enemy when going to alert
 					m_IdealMonsterState = MONSTERSTATE_ALERT;
-					m_hEnemy = NULL;
+					m_hEnemy = 0;
 					return m_IdealMonsterState;
 				}
 				// Follow if only scared a little
-				if ( m_hTargetEnt != NULL )
+				if ( m_hTargetEnt != 0 )
 				{
 					m_IdealMonsterState = MONSTERSTATE_ALERT;
 					return m_IdealMonsterState;
@@ -1066,7 +1066,7 @@ MONSTERSTATE CScientist :: GetIdealState ( void )
 
 BOOL CScientist::CanHeal( void )
 { 
-	if ( (m_healTime > gpGlobals->time) || (m_hTargetEnt == NULL) || (m_hTargetEnt->pev->health > (m_hTargetEnt->pev->max_health * 0.5)) )
+	if ( (m_healTime > gpGlobals->time) || (m_hTargetEnt == 0) || (m_hTargetEnt->pev->health > (m_hTargetEnt->pev->max_health * 0.5)) )
 		return FALSE;
 
 	return TRUE;

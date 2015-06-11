@@ -18,8 +18,6 @@
 // fall over
 #define	ROLL	2 
 
-#pragma warning(disable : 4244)
-
 #ifndef DISABLE_VEC_ORIGIN
 vec3_t vec3_origin = {0,0,0};
 #endif

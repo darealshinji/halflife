@@ -11,8 +11,6 @@
 #include "qlumpy.h"
 #include "math.h"
 
-#pragma warning (disable : 4244)
-
 typedef struct
 {
 	short	ofs, length;

@@ -2,9 +2,6 @@
 // AI Navigation areas
 // Author: Michael S. Booth (mike@turtlerockstudios.com), January 2003
 
-#pragma warning( disable : 4530 )					// STL uses exceptions, but we are not compiling with them - ignore warning
-#pragma warning( disable : 4786 )					// long STL names get truncated in browse info.
-
 #include <list>
 #include <vector>
 #include <algorithm>

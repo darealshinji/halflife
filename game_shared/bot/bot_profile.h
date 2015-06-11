@@ -10,7 +10,6 @@
 #ifndef _BOT_PROFILE_H_
 #define _BOT_PROFILE_H_
 
-#pragma warning( disable : 4786 )	// long STL names get truncated in browse info.
 #ifdef LINUX
 #include <strings.h>
 #include <stdio.h>

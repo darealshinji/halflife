@@ -14,11 +14,6 @@
 //
 
 
-#pragma warning( disable : 4244 )
-#pragma warning( disable : 4237 )
-#pragma warning( disable : 4305 )
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>

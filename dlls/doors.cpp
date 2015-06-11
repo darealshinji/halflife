@@ -314,10 +314,10 @@ void CBaseDoor::Spawn( )
 
 	m_toggle_state = TS_AT_BOTTOM;
 	
-	// if the door is flagged for USE button activation only, use NULL touch function
+	// if the door is flagged for USE button activation only, use 0 touch function
 	if ( FBitSet ( pev->spawnflags, SF_DOOR_USE_ONLY ) )
 	{
-		SetTouch ( NULL );
+		SetTouch ( 0 );
 	}
 	else // touchable button
 		SetTouch( &CBaseDoor::DoorTouch );
@@ -509,7 +509,7 @@ void CBaseDoor::DoorTouch( CBaseEntity *pOther )
 	m_hActivator = pOther;// remember who activated the door
 
 	if (DoorActivate( ))
-		SetTouch( NULL ); // Temporarily disable the touch function, until movement is finished.
+		SetTouch( 0 ); // Temporarily disable the touch function, until movement is finished.
 }
 
 
@@ -539,7 +539,7 @@ int CBaseDoor::DoorActivate( )
 	else
 	{// door should open
 
-		if ( m_hActivator != NULL && m_hActivator->IsPlayer() )
+		if ( m_hActivator != 0 && m_hActivator->IsPlayer() )
 		{// give health if player opened the door (medikit)
 		// VARS( m_eoActivator )->health += m_bHealthValue;
 	
@@ -583,7 +583,7 @@ void CBaseDoor::DoorGoUp( void )
 	{
 		float	sign = 1.0;
 
-		if ( m_hActivator != NULL )
+		if ( m_hActivator != 0 )
 		{
 			pevActivator = m_hActivator->pev;
 			
@@ -689,7 +689,7 @@ void CBaseDoor::DoorHitBottom( void )
 	// Re-instate touch method, cycle is complete
 	if ( FBitSet ( pev->spawnflags, SF_DOOR_USE_ONLY ) )
 	{// use only door
-		SetTouch ( NULL );
+		SetTouch ( 0 );
 	}
 	else // touchable door
 		SetTouch( &CBaseDoor::DoorTouch );
@@ -703,8 +703,8 @@ void CBaseDoor::DoorHitBottom( void )
 
 void CBaseDoor::Blocked( CBaseEntity *pOther )
 {
-	edict_t	*pentTarget = NULL;
-	CBaseDoor	*pDoor		= NULL;
+	edict_t	*pentTarget = 0;
+	CBaseDoor	*pDoor		= 0;
 
 
 	// Hurt the blocker a little.
@@ -866,7 +866,7 @@ void CRotDoor::Spawn( void )
 
 	if ( FBitSet ( pev->spawnflags, SF_DOOR_USE_ONLY ) )
 	{
-		SetTouch ( NULL );
+		SetTouch ( 0 );
 	}
 	else // touchable button
 		SetTouch( &CRotDoor::DoorTouch );
@@ -938,7 +938,7 @@ void CMomentaryDoor::Spawn( void )
 		m_vecPosition2 = m_vecPosition1;
 		m_vecPosition1 = pev->origin;
 	}
-	SetTouch( NULL );
+	SetTouch( 0 );
 	
 	Precache();
 }

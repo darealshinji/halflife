@@ -7,8 +7,6 @@
 
 // Author: Michael S. Booth (mike@turtlerockstudios.com), 2003
 
-#pragma warning( disable : 4530 )					// STL uses exceptions, but we are not compiling with them - ignore warning
-
 #define DEFINE_EVENT_NAMES
 
 #include "extdll.h"

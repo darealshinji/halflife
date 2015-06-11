@@ -5,8 +5,6 @@
 #ifndef _NAV_H_
 #define _NAV_H_
 
-#pragma warning( disable : 4530 )					// STL uses exceptions, but we are not compiling with them - ignore warning
-
 const float GenerationStepSize = 25.0f;		// (30) was 20, but bots can't fit always fit
 const float StepHeight = 18.0f;						///< if delta Z is greater than this, we have to jump to get up
 const float JumpHeight = 41.8f;						///< if delta Z is less than this, we can jump up on it

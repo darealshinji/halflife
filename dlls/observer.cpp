@@ -36,7 +36,7 @@ void CBasePlayer::Observer_FindNextPlayer( bool bReverse )
 	else
 		iStart = ENTINDEX( edict() );
 	int	    iCurrent = iStart;
-	m_hObserverTarget = NULL;
+	m_hObserverTarget = 0;
 	int iDir = bReverse ? -1 : 1; 
 
 	do
@@ -136,11 +136,11 @@ void CBasePlayer::Observer_CheckTarget()
 		return;
 
 	// try to find a traget if we have no current one
-	if ( m_hObserverTarget == NULL)
+	if ( m_hObserverTarget == 0)
 	{
 		Observer_FindNextPlayer( false );
 
-		if (m_hObserverTarget == NULL)
+		if (m_hObserverTarget == 0)
 		{
 			// no target found at all 
 
@@ -177,28 +177,28 @@ void CBasePlayer::Observer_CheckTarget()
 void CBasePlayer::Observer_CheckProperties()
 {
 	// try to find a traget if we have no current one
-	if ( pev->iuser1 == OBS_IN_EYE && m_hObserverTarget != NULL)
+	if ( pev->iuser1 == OBS_IN_EYE && m_hObserverTarget != 0)
 	{
 		CBasePlayer* target = (CBasePlayer*)(UTIL_PlayerByIndex( ENTINDEX(m_hObserverTarget->edict())));
 
 		if (!target )
 			return;
 
-		int weapon = (target->m_pActiveItem!=NULL)?target->m_pActiveItem->m_iId:0;
+		int weapon = (target->m_pActiveItem!=0)?target->m_pActiveItem->m_iId:0;
 		// use fov of tracked client
 		if ( m_iFOV != target->m_iFOV || m_iObserverWeapon != weapon )
 		{
 			m_iFOV = target->m_iFOV;
 			m_iClientFOV = m_iFOV;
 			// write fov before wepon data, so zoomed crosshair is set correctly
-			MESSAGE_BEGIN( MSG_ONE, gmsgSetFOV, NULL, pev );
+			MESSAGE_BEGIN( MSG_ONE, gmsgSetFOV, 0, pev );
 				WRITE_BYTE( m_iFOV );
 			MESSAGE_END();
 
 
 			m_iObserverWeapon = weapon;
 			//send weapon update
-			MESSAGE_BEGIN( MSG_ONE, gmsgCurWeapon, NULL, pev );
+			MESSAGE_BEGIN( MSG_ONE, gmsgCurWeapon, 0, pev );
 				WRITE_BYTE( 1 );	// 1 = current weapon, not on target
 				WRITE_BYTE( m_iObserverWeapon );	
 				WRITE_BYTE( 0 );	// clip
@@ -213,7 +213,7 @@ void CBasePlayer::Observer_CheckProperties()
 		{
 			m_iObserverWeapon = 0;
 
-			MESSAGE_BEGIN( MSG_ONE, gmsgCurWeapon, NULL, pev );
+			MESSAGE_BEGIN( MSG_ONE, gmsgCurWeapon, 0, pev );
 				WRITE_BYTE( 1 );	// 1 = current weapon
 				WRITE_BYTE( m_iObserverWeapon );	
 				WRITE_BYTE( 0 );	// clip
@@ -234,26 +234,26 @@ void CBasePlayer::Observer_SetMode( int iMode )
 	if ( iMode < OBS_CHASE_LOCKED || iMode > OBS_MAP_CHASE )
 		iMode = OBS_IN_EYE; // now it is
 	// verify observer target again
-	if ( m_hObserverTarget != NULL)
+	if ( m_hObserverTarget != 0)
 	{
 		CBaseEntity *pEnt = m_hObserverTarget;
 
-		if ( (pEnt == this) || (pEnt == NULL) )
-			m_hObserverTarget = NULL;
+		if ( (pEnt == this) || (pEnt == 0) )
+			m_hObserverTarget = 0;
 		else if ( ((CBasePlayer*)pEnt)->IsObserver() || (pEnt->pev->effects & EF_NODRAW) )
-			m_hObserverTarget = NULL;
+			m_hObserverTarget = 0;
 	}
 
 	// set spectator mode
 	pev->iuser1 = iMode;
 
 	// if we are not roaming, we need a valid target to track
-	if ( (iMode != OBS_ROAMING) && (m_hObserverTarget == NULL) )
+	if ( (iMode != OBS_ROAMING) && (m_hObserverTarget == 0) )
 	{
 		Observer_FindNextPlayer( false );
 
 		// if we didn't find a valid target switch to roaming
-		if (m_hObserverTarget == NULL)
+		if (m_hObserverTarget == 0)
 		{
 			ClientPrint( pev, HUD_PRINTCENTER, "#Spec_NoTarget"  );
 			pev->iuser1 = OBS_ROAMING;

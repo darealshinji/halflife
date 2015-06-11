@@ -24,8 +24,6 @@
 #include "..\..\engine\studio.h"
 #include "mdlviewer.h"
 
-#pragma warning( disable : 4244 ) // double to float
-
 ////////////////////////////////////////////////////////////////////////
 
 static int g_texnum = 1;

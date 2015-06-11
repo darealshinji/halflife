@@ -41,8 +41,6 @@
 
 static int pm_shared_initialized = 0;
 
-#pragma warning( disable : 4305 )
-
 typedef enum {mod_brush, mod_sprite, mod_alias, mod_studio} modtype_t;
 
 playermove_t *pmove = NULL;
@@ -119,8 +117,6 @@ typedef struct hull_s
 
 #define PLAYER_LONGJUMP_SPEED 350 // how fast we longjump
 
-// double to float warning
-#pragma warning(disable : 4244)
 #define max(a, b)  (((a) > (b)) ? (a) : (b))
 #define min(a, b)  (((a) < (b)) ? (a) : (b))
 // up / down
