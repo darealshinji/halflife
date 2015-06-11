@@ -67,7 +67,7 @@ CVoiceStatus* GetClientVoiceMgr()
 // CVoiceStatus.
 // ---------------------------------------------------------------------- //
 
-static CVoiceStatus *g_pInternalVoiceStatus = NULL;
+static CVoiceStatus *g_pInternalVoiceStatus = 0;
 
 int __MsgFunc_VoiceMask(const char *pszName, int iSize, void *pbuf)
 {
@@ -125,47 +125,47 @@ CVoiceStatus::CVoiceStatus()
 	m_bBanMgrInitialized = false;
 	m_LastUpdateServerState = 0;
 
-	m_pSpeakerLabelIcon = NULL;
-	m_pScoreboardNeverSpoken = NULL;
-	m_pScoreboardNotSpeaking = NULL;
-	m_pScoreboardSpeaking = NULL;
-	m_pScoreboardSpeaking2 = NULL;
-	m_pScoreboardSquelch = NULL;
-	m_pScoreboardBanned = NULL;
+	m_pSpeakerLabelIcon = 0;
+	m_pScoreboardNeverSpoken = 0;
+	m_pScoreboardNotSpeaking = 0;
+	m_pScoreboardSpeaking = 0;
+	m_pScoreboardSpeaking2 = 0;
+	m_pScoreboardSquelch = 0;
+	m_pScoreboardBanned = 0;
 	
-	m_pLocalBitmap = NULL;
-	m_pAckBitmap = NULL;
+	m_pLocalBitmap = 0;
+	m_pAckBitmap = 0;
 
 	m_bTalking = m_bServerAcked = false;
 
 	memset(m_pBanButtons, 0, sizeof(m_pBanButtons));
 
-	m_pParentPanel = NULL;
+	m_pParentPanel = 0;
 
 	m_bServerModEnable = -1;
 
-	m_pchGameDir = NULL;
+	m_pchGameDir = 0;
 }
 
 
 CVoiceStatus::~CVoiceStatus()
 {
-	g_pInternalVoiceStatus = NULL;
+	g_pInternalVoiceStatus = 0;
 	
 	for(int i=0; i < MAX_VOICE_SPEAKERS; i++)
 	{
 		delete m_Labels[i].m_pLabel;
-		m_Labels[i].m_pLabel = NULL;
+		m_Labels[i].m_pLabel = 0;
 
 		delete m_Labels[i].m_pIcon;
-		m_Labels[i].m_pIcon = NULL;
+		m_Labels[i].m_pIcon = 0;
 		
 		delete m_Labels[i].m_pBackground;
-		m_Labels[i].m_pBackground = NULL;
+		m_Labels[i].m_pBackground = 0;
 	}				
 
 	delete m_pLocalLabel;
-	m_pLocalLabel = NULL;
+	m_pLocalLabel = 0;
 
 	FreeBitmaps();
 
@@ -202,7 +202,7 @@ int CVoiceStatus::Init(
 	g_pInternalVoiceStatus = this;
 
 	m_BlinkTimer = 0;
-	m_VoiceHeadModel = NULL;
+	m_VoiceHeadModel = 0;
 	memset(m_Labels, 0, sizeof(m_Labels));
 	
 	for(int i=0; i < MAX_VOICE_SPEAKERS; i++)
@@ -211,7 +211,7 @@ int CVoiceStatus::Init(
 
 		pLabel->m_pBackground = new Label("");
 
-		if(pLabel->m_pLabel = new Label(""))
+		if ( (pLabel->m_pLabel = new Label("")) )
 		{
 			pLabel->m_pLabel->setVisible( true );
 			pLabel->m_pLabel->setFont( Scheme::sf_primary2 );
@@ -220,7 +220,7 @@ int CVoiceStatus::Init(
 			pLabel->m_pLabel->setParent( pLabel->m_pBackground );
 		}
 
-		if( pLabel->m_pIcon = new ImagePanel( NULL ) )
+		if( (pLabel->m_pIcon = new ImagePanel( 0 )) )
 		{
 			pLabel->m_pIcon->setVisible( true );
 			pLabel->m_pIcon->setParent( pLabel->m_pBackground );
@@ -229,7 +229,7 @@ int CVoiceStatus::Init(
 		pLabel->m_clientindex = -1;
 	}
 
-	m_pLocalLabel = new ImagePanel(NULL);
+	m_pLocalLabel = new ImagePanel(0);
 
 	m_bInSquelchMode = false;
 
@@ -254,12 +254,12 @@ int CVoiceStatus::VidInit()
 	FreeBitmaps();
 
 
-	if( m_pLocalBitmap = vgui_LoadTGA("gfx/vgui/icntlk_pl.tga") )
+	if( (m_pLocalBitmap = vgui_LoadTGA("gfx/vgui/icntlk_pl.tga")) )
 	{
 		m_pLocalBitmap->setColor(Color(255,255,255,135));
 	}
 
-	if( m_pAckBitmap = vgui_LoadTGA("gfx/vgui/icntlk_sv.tga") )
+	if( (m_pAckBitmap = vgui_LoadTGA("gfx/vgui/icntlk_sv.tga")) )
 	{
 		m_pAckBitmap->setColor(Color(255,255,255,135));	// Give just a tiny bit of translucency so software draws correctly.
 	}
@@ -268,30 +268,30 @@ int CVoiceStatus::VidInit()
 	m_pLocalLabel->setVisible( false );
 
 
-	if( m_pSpeakerLabelIcon = vgui_LoadTGANoInvertAlpha("gfx/vgui/speaker4.tga" ) )
+	if( (m_pSpeakerLabelIcon = vgui_LoadTGANoInvertAlpha("gfx/vgui/speaker4.tga" )) )
 		m_pSpeakerLabelIcon->setColor( Color(255,255,255,1) );		// Give just a tiny bit of translucency so software draws correctly.
 
-	if (m_pScoreboardNeverSpoken = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_speaker1.tga"))
+	if ( (m_pScoreboardNeverSpoken = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_speaker1.tga")) )
 		m_pScoreboardNeverSpoken->setColor(Color(255,255,255,1));	// Give just a tiny bit of translucency so software draws correctly.
 
-	if(m_pScoreboardNotSpeaking = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_speaker2.tga"))
+	if ( (m_pScoreboardNotSpeaking = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_speaker2.tga")) )
 		m_pScoreboardNotSpeaking->setColor(Color(255,255,255,1));	// Give just a tiny bit of translucency so software draws correctly.
-	
-	if(m_pScoreboardSpeaking = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_speaker3.tga"))
+
+	if ( (m_pScoreboardSpeaking = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_speaker3.tga")) )
 		m_pScoreboardSpeaking->setColor(Color(255,255,255,1));	// Give just a tiny bit of translucency so software draws correctly.
-	
-	if(m_pScoreboardSpeaking2 = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_speaker4.tga"))
+
+	if ( (m_pScoreboardSpeaking2 = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_speaker4.tga")) )
 		m_pScoreboardSpeaking2->setColor(Color(255,255,255,1));	// Give just a tiny bit of translucency so software draws correctly.
-	
-	if(m_pScoreboardSquelch  = vgui_LoadTGA("gfx/vgui/icntlk_squelch.tga"))
+
+	if ( (m_pScoreboardSquelch  = vgui_LoadTGA("gfx/vgui/icntlk_squelch.tga")) )
 		m_pScoreboardSquelch->setColor(Color(255,255,255,1));	// Give just a tiny bit of translucency so software draws correctly.
 
-	if(m_pScoreboardBanned = vgui_LoadTGA("gfx/vgui/640_voiceblocked.tga"))
+	if ( (m_pScoreboardBanned = vgui_LoadTGA("gfx/vgui/640_voiceblocked.tga")) )
 		m_pScoreboardBanned->setColor(Color(255,255,255,1));	// Give just a tiny bit of translucency so software draws correctly.
 
 	// Figure out the voice head model height.
 	m_VoiceHeadModelHeight = 45;
-	char *pFile = (char *)gEngfuncs.COM_LoadFile("scripts/voicemodel.txt", 5, NULL);
+	char *pFile = (char *)gEngfuncs.COM_LoadFile("scripts/voicemodel.txt", 5, 0);
 	if(pFile)
 	{
 		char token[4096];
@@ -391,7 +391,7 @@ void CVoiceStatus::CreateEntities()
 
 void CVoiceStatus::UpdateSpeakerStatus( int entindex, qboolean bTalking )
 {
-	cvar_t *pVoiceLoopback = NULL;
+	cvar_t *pVoiceLoopback = 0;
 
 	if ( !m_pParentPanel || !*m_pParentPanel )
 	{
@@ -448,7 +448,7 @@ void CVoiceStatus::UpdateSpeakerStatus( int entindex, qboolean bTalking )
 				// if this isn't the local player (unless they have voice_loopback on)
 				if ( ( entindex != iLocalPlayerIndex ) || ( pVoiceLoopback && pVoiceLoopback->value ) )
 				{
-					if ( pLabel = GetFreeVoiceLabel() )
+					if ( (pLabel = GetFreeVoiceLabel()) )
 					{
 						// Get the name from the engine.
 						hud_player_info_t info;
@@ -697,7 +697,7 @@ CVoiceLabel* CVoiceStatus::FindVoiceLabel(int clientindex)
 			return &m_Labels[i];
 	}
 
-	return NULL;
+	return 0;
 }
 
 
@@ -788,43 +788,43 @@ void CVoiceStatus::FreeBitmaps()
 {
 	// Delete all the images we have loaded.
 	delete m_pLocalBitmap;
-	m_pLocalBitmap = NULL;
+	m_pLocalBitmap = 0;
 
 	delete m_pAckBitmap;
-	m_pAckBitmap = NULL;
+	m_pAckBitmap = 0;
 
 	delete m_pSpeakerLabelIcon;
-	m_pSpeakerLabelIcon = NULL;
+	m_pSpeakerLabelIcon = 0;
 
 	delete m_pScoreboardNeverSpoken;
-	m_pScoreboardNeverSpoken = NULL;
+	m_pScoreboardNeverSpoken = 0;
 
 	delete m_pScoreboardNotSpeaking;
-	m_pScoreboardNotSpeaking = NULL;
+	m_pScoreboardNotSpeaking = 0;
 
 	delete m_pScoreboardSpeaking;
-	m_pScoreboardSpeaking = NULL;
+	m_pScoreboardSpeaking = 0;
 
 	delete m_pScoreboardSpeaking2;
-	m_pScoreboardSpeaking2 = NULL;
+	m_pScoreboardSpeaking2 = 0;
 
 	delete m_pScoreboardSquelch;
-	m_pScoreboardSquelch = NULL;
+	m_pScoreboardSquelch = 0;
 
 	delete m_pScoreboardBanned;
-	m_pScoreboardBanned = NULL;
+	m_pScoreboardBanned = 0;
 
 	// Clear references to the images in panels.
 	for(int i=0; i < VOICE_MAX_PLAYERS; i++)
 	{
 		if (m_pBanButtons[i])
 		{
-			m_pBanButtons[i]->setImage(NULL);
+			m_pBanButtons[i]->setImage(0);
 		}
 	}
 
 	if(m_pLocalLabel)
-		m_pLocalLabel->setImage(NULL);
+		m_pLocalLabel->setImage(0);
 }
 
 //-----------------------------------------------------------------------------

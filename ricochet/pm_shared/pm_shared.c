@@ -28,12 +28,12 @@
 #include <ctype.h>  // isspace
 
 #ifdef CLIENT_DLL
-	// Spectator Mode
-	float	vecNewViewAngles[3];
-	float	vecNewViewOrigin[3];
-	int		iHasNewViewAngles;
-	int		iHasNewViewOrigin;
-	int		iIsSpectator;
+// Spectator Mode
+extern float	vecNewViewAngles[3];
+extern float	vecNewViewOrigin[3];
+extern int		iHasNewViewAngles;
+extern int		iHasNewViewOrigin;
+extern int		iIsSpectator;
 #endif
 
 static int pm_shared_initialized = 0;

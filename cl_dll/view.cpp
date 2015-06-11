@@ -120,6 +120,7 @@ void V_NormalizeAngles( float *angles )
 		}
 	}
 }
+*/
 
 /*
 ===================
