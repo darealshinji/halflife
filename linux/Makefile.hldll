@@ -22,15 +22,16 @@ PM_INCLUDEDIRS=-I$(COMMON_SRC_DIR)  -I$(PUBLIC_SRC_DIR)
 GAME_SHARED_INCLUDEDIRS=-I$(HLDLL_SRC_DIR) -I$(ENGINE_SRC_DIR) -I$(COMMON_SRC_DIR) -I$(PM_SRC_DIR) -I$(PUBLIC_SRC_DIR)
 
 ifeq ($(OS),Linux)
-LDFLAGS= -lm
+LDFLAGS+= -Wl,-soname,hl.$(SHLIBEXT)
+LIBS= -lm
 else
-LDFLAGS= -lm -lstdc++
+LIBS= -lm -lstdc++
 endif
 
-DO_HLDLL_CC=$(CC) $(HLDLL_INCLUDEDIRS) $(CFLAGS) -o $@ -c $<
-DO_HLWPN_CC=$(CC) $(HLWPN_INCLUDEDIRS) $(CFLAGS) -o $@ -c $<
+DO_HLDLL_CC=$(CPLUS) $(HLDLL_INCLUDEDIRS) $(CFLAGS) -o $@ -c $<
+DO_HLWPN_CC=$(CPLUS) $(HLWPN_INCLUDEDIRS) $(CFLAGS) -o $@ -c $<
 DO_PM_CC=$(CC) $(PM_INCLUDEDIRS) $(CFLAGS) -o $@ -c $<
-DO_GAME_SHARED_CC=$(CC) $(GAME_SHARED_INCLUDEDIRS) $(CFLAGS) -o $@ -c $<
+DO_GAME_SHARED_CC=$(CPLUS) $(GAME_SHARED_INCLUDEDIRS) $(CFLAGS) -o $@ -c $<
 
 #####################################################################
 
@@ -154,7 +155,7 @@ dirs:
 	-mkdir $(GAME_SHARED_OBJ_DIR)
 
 hl.$(SHLIBEXT): $(HLDLL_OBJS) $(HLWPN_OBJS) $(PM_OBJS) $(GAME_SHARED_OBJS)
-	$(CC) $(LDFLAGS) $(SHLIBLDFLAGS) -o $(BUILD_DIR)/$@ $(HLDLL_OBJS) $(HLWPN_OBJS) $(PM_OBJS) $(GAME_SHARED_OBJS)
+	$(CPLUS) $(SHLIBLDFLAGS) $(LDFLAGS) -o $(BUILD_DIR)/$@ $(HLDLL_OBJS) $(HLWPN_OBJS) $(PM_OBJS) $(GAME_SHARED_OBJS) $(LIBS)
 	#p4 edit ../../game/mod/dlls/hl.$(SHLIBEXT)
 	#cp $(BUILD_DIR)/$@  ../../game/mod/dlls/hl.$(SHLIBEXT)
 	#./gendbg.sh ../../game/mod/dlls/hl.$(SHLIBEXT)

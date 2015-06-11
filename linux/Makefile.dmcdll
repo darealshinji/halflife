@@ -19,11 +19,13 @@ DMCDLL_INCLUDEDIRS=-I$(ENGINE_SRC_DIR) -I$(COMMON_SRC_DIR) -I$(PM_SRC_DIR) -I$(G
 PM_INCLUDEDIRS=-I$(COMMON_SRC_DIR) -I$(PUBLIC_SRC_DIR)
 GAME_SHARED_INCLUDEDIRS=-I$(DMCDLL_SRC_DIR) -I$(ENGINE_SRC_DIR) -I$(COMMON_SRC_DIR) -I$(PUBLIC_SRC_DIR)
 
-LDFLAGS=
+ifeq ($(OS),Linux)
+LDFLAGS=-Wl,-soname,dmc.$(SHLIBEXT)  -lm
+endif
 
-DO_DMCDLL_CC=$(CC) $(DMCDLL_INCLUDEDIRS) $(CFLAGS) $(SHLIBCFLAGS) -o $@ -c $<
+DO_DMCDLL_CC=$(CPLUS) $(DMCDLL_INCLUDEDIRS) $(CFLAGS) $(SHLIBCFLAGS) -o $@ -c $<
 DO_PM_CC=$(CC) $(PM_INCLUDEDIRS) $(CFLAGS) $(SHLIBCFLAGS) -o $@ -c $<
-DO_GAME_SHARED_CC=$(CC) $(GAME_SHARED_INCLUDEDIRS) $(CFLAGS) $(SHLIBFLAGS) -o $@ -c $<
+DO_GAME_SHARED_CC=$(CPLUS) $(GAME_SHARED_INCLUDEDIRS) $(CFLAGS) $(SHLIBFLAGS) -o $@ -c $<
 
 #############################################################################
 
@@ -92,11 +94,11 @@ dirs:
 	-mkdir $(GAME_SHARED_OBJ_DIR)
 
 dmc.$(SHLIBEXT): $(DMCDLL_OBJS) $(PM_OBJS) $(GAME_SHARED_OBJS)
-	$(CLINK) $(SHLIBLDFLAGS) -o $(BUILD_DIR)/$@ $(DMCDLL_OBJS) $(PM_OBJS) $(GAME_SHARED_OBJS) $(LDFLAGS) $(CPP_LIB)
-	p4 edit ../../game/mod/dlls/$@
-	cp $(BUILD_DIR)/$@  ../../game/mod/dlls
-	./gendbg.sh ../../game/mod/dlls/dmc.$(SHLIBEXT)
-		
+	$(CPLUS) $(SHLIBLDFLAGS) -o $(BUILD_DIR)/$@ $(DMCDLL_OBJS) $(PM_OBJS) $(GAME_SHARED_OBJS) $(LDFLAGS) $(CPP_LIB)
+	#p4 edit ../../game/mod/dlls/$@
+	#cp $(BUILD_DIR)/$@  ../../game/mod/dlls
+	#./gendbg.sh ../../game/mod/dlls/dmc.$(SHLIBEXT)
+
 $(DMCDLL_OBJ_DIR)/%.o : $(DMCDLL_SRC_DIR)/%.cpp
 	$(DO_DMCDLL_CC)
 

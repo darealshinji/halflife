@@ -31,7 +31,7 @@ ELF-GC-DYNSTR=./elf-gc-dynstr
 ifeq ($(OS),Linux)
 	CC="gcc-4.6 -m32"
 	CPLUS="g++-4.6 -m32"
-	CPP_LIB:=-ldl -lpthread
+	CPP_LIB:=-ldl -pthread -lpthread
 endif
 
 ifeq ($(OS),Darwin)
@@ -95,14 +95,18 @@ endif
 
 ARCH_CFLAGS="$(ARCH_CFLAGS_I486)"
 
-BASE_CFLAGS=-Wall -Wno-switch -Wno-sign-compare -Wno-write-strings -Wno-invalid-offsetof
-BASE_CFLAGS+=-fpermissive -fno-strict-aliasing -DNDEBUG -DPOSIX -D_POSIX -DLINUX -D_LINUX -DGNUC -DHL1 -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -DQUIVER -DQUAKE2 -DVALVE_DLL -D_alloca=alloca -fno-exceptions -fexpensive-optimizations -D_vsnprintf=vsnprintf -DNO_MALLOC_OVERRIDE -Werror=return-type
-#BASE_CFLAGS+=-w
+BASE_CFLAGS=-Wall -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-result -Wno-unused-function
+BASE_CFLAGS+=-Wno-uninitialized -Wno-sign-compare -Wno-write-strings -Wno-invalid-offsetof -Wno-switch -Wno-reorder
+BASE_CFLAGS+=-Werror=return-type -Wformat -Wformat-security
+BASE_CFLAGS+=-fstack-protector -fcheck-new -fno-strict-aliasing -fno-exceptions -fexpensive-optimizations
+BASE_CFLAGS+=-DNDEBUG -DPOSIX -D_POSIX -DGNUC -DHL1 -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -DQUIVER -DQUAKE2 -DVALVE_DLL -D_alloca=alloca -D_vsnprintf=vsnprintf -DNO_MALLOC_OVERRIDE
 
 ifeq ($(OS),Darwin)
-	BASE_CFLAGS += -DOSX -D_OSX -fvisibility=hidden
-else
-	BASE_CFLAGS+= -DLINUX -D_LINUX
+BASE_CFLAGS += -DOSX -D_OSX -fvisibility=hidden
+endif
+ifeq ($(OS),Linux)
+BASE_CFLAGS+= -DLINUX -D_LINUX
+BASE_CFLAGS+= -fPIC
 endif
 
 DEDICATED_CFLAGS="-DDEDICATED -DSWDS"
@@ -110,10 +114,11 @@ ifeq ($(OS),Darwin)
 SHLIBEXT=dylib
 SHLIBCFLAGS=
 SHLIBLDFLAGS="-shared -gdwarf-2 -g2"
-else
+endif
+ifeq ($(OS),Linux)
 SHLIBEXT=so
-SHLIBCFLAGS=
-SHLIBLDFLAGS="-shared -gdwarf-2 -g2 -Wl,-Map,$@_map.txt"
+#SHLIBLDFLAGS="-shared -gdwarf-2 -g2 -Wl,-Map,$@_map.txt"
+SHLIBLDFLAGS="-shared -Wl,--as-needed -Wl,-z,relro -Wl,-z,defs -s"
 endif
 AR=ar
 LIBEXT=a
@@ -143,8 +148,8 @@ TARGETS+= \
 	ricochet_cdll \
 
 build_dir:
-	-mkdir $(BUILD_DIR);
-	cp vgui.dylib vgui.so $(BUILD_DIR)
+	-mkdir -p $(BUILD_DIR);
+	cp -f vgui.dylib vgui.so $(BUILD_DIR)
 	cd $(BUILD_DIR)
 
 targets: $(TARGETS)
@@ -160,7 +165,7 @@ ricochet_cdll: build_dir
 	$(MAKE_RICOCHET_CDLL) ARCH=i686 CC=$(CC) CPLUS=$(CPLUS) CPP_LIB="$(CPP_LIB)" BUILD_DIR=$(BUILD_DIR) BUILD_OBJ_DIR=$(BUILD_OBJ_DIR) SOURCE_DIR=$(SOURCE_DIR) ENGINE_SRC_DIR=$(ENGINE_SRC_DIR) COMMON_SRC_DIR=$(COMMON_SRC_DIR) BASE_CFLAGS="$(BASE_CFLAGS)" PUBLIC_SRC_DIR=$(PUBLIC_SRC_DIR) DBG_SRC_DIR=$(DBG_SRC_DIR) ARCH_CFLAGS="$(ARCH_CFLAGS_I686)" GAME_SHARED_SRC_DIR=$(GAME_SHARED_SRC_DIR) CLINK=$(CLINK) PM_SRC_DIR=$(PM_SRC_DIR) SHLIBEXT=$(SHLIBEXT) SHLIBCFLAGS=$(SHLIBCFLAGS) SHLIBLDFLAGS=$(SHLIBLDFLAGS) CFG=$(CFG) OS=$(OS)
 
 hl: build_dir
-	$(MAKE_HL_LIB) CC=$(CC) ARCH=$(ARCH) CPP_LIB="$(CPP_LIB)" BUILD_DIR=$(BUILD_DIR) BUILD_OBJ_DIR=$(BUILD_OBJ_DIR) SOURCE_DIR=$(SOURCE_DIR) ENGINE_SRC_DIR=$(ENGINE_SRC_DIR) COMMON_SRC_DIR=$(COMMON_SRC_DIR) PM_SRC_DIR=$(PM_SRC_DIR) GAME_SHARED_SRC_DIR=$(GAME_SHARED_SRC_DIR) GAMEDB_SRC_DIR=$(GAMEDB_SRC_DIR) BASE_CFLAGS="$(BASE_CFLAGS)" SHLIBEXT=$(SHLIBEXT) SHLIBCFLAGS=$(SHLIBCFLAGS) SHLIBLDFLAGS=$(SHLIBLDFLAGS) PUBLIC_SRC_DIR=$(PUBLIC_SRC_DIR) CFG=$(CFG) OS=$(OS) ARCH_CFLAGS="$(ARCH_CFLAGS_I686)" 
+	$(MAKE_HL_LIB) CC=$(CC) ARCH=$(ARCH) CPLUS=$(CPLUS) CPP_LIB="$(CPP_LIB)" BUILD_DIR=$(BUILD_DIR) BUILD_OBJ_DIR=$(BUILD_OBJ_DIR) SOURCE_DIR=$(SOURCE_DIR) ENGINE_SRC_DIR=$(ENGINE_SRC_DIR) COMMON_SRC_DIR=$(COMMON_SRC_DIR) PM_SRC_DIR=$(PM_SRC_DIR) GAME_SHARED_SRC_DIR=$(GAME_SHARED_SRC_DIR) GAMEDB_SRC_DIR=$(GAMEDB_SRC_DIR) BASE_CFLAGS="$(BASE_CFLAGS)" SHLIBEXT=$(SHLIBEXT) SHLIBCFLAGS=$(SHLIBCFLAGS) SHLIBLDFLAGS=$(SHLIBLDFLAGS) PUBLIC_SRC_DIR=$(PUBLIC_SRC_DIR) CFG=$(CFG) OS=$(OS) ARCH_CFLAGS="$(ARCH_CFLAGS_I686)" 
 
 dmc: build_dir
 	$(MAKE_DMC_LIB) CC=$(CC) CPLUS=$(CPLUS) CPP_LIB="$(CPP_LIB)" ARCH=$(ARCH) BUILD_DIR=$(BUILD_DIR) BUILD_OBJ_DIR=$(BUILD_OBJ_DIR) SOURCE_DIR=$(SOURCE_DIR) ENGINE_SRC_DIR=$(ENGINE_SRC_DIR) COMMON_SRC_DIR=$(COMMON_SRC_DIR) GAME_SHARED_SRC_DIR=$(GAME_SHARED_SRC_DIR) BASE_CFLAGS="$(BASE_CFLAGS)" SHLIBEXT=$(SHLIBEXT) SHLIBCFLAGS=$(SHLIBCFLAGS) SHLIBLDFLAGS=$(SHLIBLDFLAGS) PUBLIC_SRC_DIR=$(PUBLIC_SRC_DIR) CFG=$(CFG) OS=$(OS)  CLINK=$(CLINK) ARCH_CFLAGS="$(ARCH_CFLAGS_I686)"
